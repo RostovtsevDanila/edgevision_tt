@@ -31,7 +31,7 @@ def send_message(msg: dict):
     try:
         res = requests.post(
             f"http://{CONTROLLER_IP}:{CONTROLLER_PORT}{COLLECTOR_MESSAGE_ENDPOINT}",
-            data=msg,
+            json=msg,
             timeout=MESSAGE_FREQUENCY
         )
         return res
