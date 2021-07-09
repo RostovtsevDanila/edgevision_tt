@@ -13,7 +13,7 @@ def main():
             conn, address = m_socket.accept()
             print(f"Connected: {address}")
             while True:
-                data = conn.recv(1024)
+                data = conn.recv(128)
                 if not data:
                     break
                 data = json.loads(data)
