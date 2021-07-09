@@ -13,8 +13,8 @@ import random
 import time
 import requests
 
-
-CONTROLLER_IP = "localhost"
+# todo вынести в переменные среды
+CONTROLLER_HOST = "controller"
 CONTROLLER_PORT = "9999"
 COLLECTOR_MESSAGE_ENDPOINT = "/msg"
 MESSAGE_FREQUENCY = 1 / 300     # sec
@@ -22,7 +22,7 @@ MESSAGE_FREQUENCY = 1 / 300     # sec
 
 def generate_message() -> dict:
     return {
-        "datetime": datetime.now().strftime("%Y%m%dT%H%M"),
+        "datetime": datetime.now().strftime("%Y%m%dT%H%M%S"),
         "payload": random.randint(-1024, 1024),
     }
 
@@ -30,9 +30,8 @@ def generate_message() -> dict:
 def send_message(msg: dict):
     try:
         res = requests.post(
-            f"http://{CONTROLLER_IP}:{CONTROLLER_PORT}{COLLECTOR_MESSAGE_ENDPOINT}",
+            f"http://{CONTROLLER_HOST}:{CONTROLLER_PORT}{COLLECTOR_MESSAGE_ENDPOINT}",
             json=msg,
-            timeout=MESSAGE_FREQUENCY
         )
         return res
 

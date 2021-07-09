@@ -1,0 +1,20 @@
+version: "3"
+services:
+    sensor:
+      build:
+        context: ../sensor
+        dockerfile: Dockerfile
+      depends_on:
+        - controller
+
+    controller:
+      build:
+        context: ../controller
+        dockerfile: Dockerfile
+      depends_on:
+        - manipulator
+
+    manipulator:
+        build:
+          context: ../manipulator
+          dockerfile: Dockerfile
