@@ -9,20 +9,20 @@ Sensor
 
 
 from datetime import datetime
+from os import environ
 import random
 import time
 import requests
 
-
-CONTROLLER_IP = "localhost"
-CONTROLLER_PORT = "9999"
-COLLECTOR_MESSAGE_ENDPOINT = "/msg"
+CONTROLLER_HOST = str(environ.get("CONTROLLER_HOST"))
+CONTROLLER_PORT = int(environ.get("CONTROLLER_PORT"))
 MESSAGE_FREQUENCY = 1 / 300     # sec
+COLLECTOR_MESSAGE_ENDPOINT = "/msg"
 
 
 def generate_message() -> dict:
     return {
-        "datetime": datetime.now().strftime("%Y%m%dT%H%M"),
+        "datetime": datetime.now().strftime("%Y%m%dT%H%M%S"),
         "payload": random.randint(-1024, 1024),
     }
 
@@ -30,9 +30,8 @@ def generate_message() -> dict:
 def send_message(msg: dict):
     try:
         res = requests.post(
-            f"http://{CONTROLLER_IP}:{CONTROLLER_PORT}{COLLECTOR_MESSAGE_ENDPOINT}",
+            f"http://{CONTROLLER_HOST}:{CONTROLLER_PORT}{COLLECTOR_MESSAGE_ENDPOINT}",
             json=msg,
-            timeout=MESSAGE_FREQUENCY
         )
         return res
 
