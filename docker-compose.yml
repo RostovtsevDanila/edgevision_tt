@@ -1,0 +1,40 @@
+version: "3.7"
+services:
+    sensor:
+      build:
+        context: sensor
+        dockerfile: Dockerfile
+      hostname: sensor
+      networks:
+        - edgvision
+      environment:
+        - CONTROLLER_HOST=controller
+        - CONTROLLER_PORT=9999
+
+    controller:
+      build:
+        context: controller
+        dockerfile: Dockerfile
+      container_name: controller
+      hostname: controller
+      networks:
+        - edgvision
+      environment:
+        - MANIPULATOR_HOST=manipulator
+        - MANIPULATOR_PORT=9998
+
+    manipulator:
+        build:
+          context: manipulator
+          dockerfile: Dockerfile
+        container_name: manipulator
+        hostname: manipulator
+        networks:
+          - edgvision
+        environment:
+          - MANIPULATOR_HOST=manipulator
+          - MANIPULATOR_PORT=9998
+networks:
+  edgvision:
+    name: edgvision
+    driver: bridge

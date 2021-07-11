@@ -1,4 +1,4 @@
-from threading import Lock, Thread
+from threading import Lock
 
 
 class DataDriverMeta(type):
@@ -14,10 +14,10 @@ class DataDriverMeta(type):
 
 
 class DataDriver(metaclass=DataDriverMeta):
-    current_data: int = 0
+    value: int = 0
 
     def add_data(self, val):
-        self.current_data += val
+        self.value += val
 
     def obnulis(self):
-        self.current_data = 0
+        self.value = 0

@@ -1,8 +1,9 @@
 import socket
 import json
+from os import environ
 
-MANIPULATOR_HOST = "manipulator"
-MANIPULATOR_PORT = 9997
+MANIPULATOR_HOST = str(environ.get("MANIPULATOR_HOST"))
+MANIPULATOR_PORT = int(environ.get("MANIPULATOR_PORT"))
 
 
 def main():
@@ -18,8 +19,6 @@ def main():
                     break
                 data = json.loads(data)
                 print(data)
-                # todo вывести в логфайл
-                # conn.send("Ok".encode("utf-8").upper())
             conn.close()
 
 

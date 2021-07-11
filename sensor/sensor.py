@@ -9,15 +9,15 @@ Sensor
 
 
 from datetime import datetime
+from os import environ
 import random
 import time
 import requests
 
-# todo вынести в переменные среды
-CONTROLLER_HOST = "controller"
-CONTROLLER_PORT = "9999"
-COLLECTOR_MESSAGE_ENDPOINT = "/msg"
+CONTROLLER_HOST = str(environ.get("CONTROLLER_HOST"))
+CONTROLLER_PORT = int(environ.get("CONTROLLER_PORT"))
 MESSAGE_FREQUENCY = 1 / 300     # sec
+COLLECTOR_MESSAGE_ENDPOINT = "/msg"
 
 
 def generate_message() -> dict:
