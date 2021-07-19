@@ -15,9 +15,12 @@ class DataDriverMeta(type):
 
 class DataDriver(metaclass=DataDriverMeta):
     value: int = 0
+    counter: int = 0
 
     def add_data(self, val):
         self.value += val
+        self.counter += 1
 
     def obnulis(self):
         self.value = 0
+        self.counter = 0

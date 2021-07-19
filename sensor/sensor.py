@@ -11,8 +11,9 @@ Sensor
 from datetime import datetime
 from os import environ
 import random
-import time
 import requests
+from ratelimit import limits, sleep_and_retry
+
 
 CONTROLLER_HOST = str(environ.get("CONTROLLER_HOST"))
 CONTROLLER_PORT = int(environ.get("CONTROLLER_PORT"))
@@ -20,30 +21,37 @@ MESSAGE_FREQUENCY = 1 / 300     # sec
 COLLECTOR_MESSAGE_ENDPOINT = "/msg"
 
 
-def generate_message() -> dict:
+def generate_data() -> dict:
     return {
         "datetime": datetime.now().strftime("%Y%m%dT%H%M%S"),
         "payload": random.randint(-1024, 1024),
     }
 
 
-def send_message(msg: dict):
-    try:
-        res = requests.post(
-            f"http://{CONTROLLER_HOST}:{CONTROLLER_PORT}{COLLECTOR_MESSAGE_ENDPOINT}",
-            json=msg,
-        )
-        return res
+@sleep_and_retry
+@limits(calls=1, period=MESSAGE_FREQUENCY)
+def send_message(session: requests.Session, url: str, data: dict):
+    res = session.post(url, json=data)
+    print(res)
 
-    except requests.exceptions.ConnectionError as err:
-        return err
+
+def start_job():
+    with requests.Session() as session:
+        adapter = requests.sessions.HTTPAdapter(
+            pool_connections=300,
+            pool_maxsize=300,
+        )
+        session.mount("http://", adapter)
+        while True:
+            send_message(
+                session,
+                url=f"http://{CONTROLLER_HOST}:{CONTROLLER_PORT}{COLLECTOR_MESSAGE_ENDPOINT}",
+                data=generate_data(),
+            )
 
 
 def main():
-    while True:
-        time.sleep(MESSAGE_FREQUENCY)
-        msg = generate_message()
-        print(send_message(msg))
+    start_job()
 
 
 if __name__ == '__main__':
